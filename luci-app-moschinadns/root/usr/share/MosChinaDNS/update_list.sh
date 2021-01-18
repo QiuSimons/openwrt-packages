@@ -2,6 +2,7 @@
 PATH="/usr/sbin:/usr/bin:/sbin:/bin"
 IP_URL="https://ftp.apnic.net/apnic/stats/apnic/delegated-apnic-latest"
 DOMAIN_URL="https://raw.githubusercontent.com/felixonmars/dnsmasq-china-list/master/accelerated-domains.china.conf"
+GFWDOMAIN_URL="https://raw.githubusercontent.com/Loyalsoldier/cn-blocked-domain/release/domains.txt"
 WORKDIR=$(uci get MosChinaDNS.MosChinaDNS.workdir 2>/dev/null)
 TEMPDIR="/tmp/MosChinaDNSupdatelist"
 
@@ -29,14 +30,19 @@ update_ip_list(){
 update_domain_list(){
     echo "Updating domain list"
     local tmpdomainfile="$TEMPDIR/domain_data"
+    local tmpgfwdomainfile="$TEMPDIR/gfwdomain_data"
     local tmpfile="$TEMPDIR/temp_chn_domain.list"
+    local tmpgfwfile="$TEMPDIR/temp_gfw_domain.list"
     curl -L -k $DOMAIN_URL -o $tmpdomainfile 2>/dev/null
+    curl -L -k $GFWDOMAIN_URL -o $tmpgfwdomainfile 2>/dev/null
     if [ "$(awk 'NR==1 {print}' $tmpdomainfile 2>/dev/null)" = "" ]; then
         echo "received domain empty body"
         EXIT 3
     fi
     cat $tmpdomainfile | awk -F '/' '{print $2}' > $tmpfile 2>/dev/null
     mv -f $tmpfile "$WORKDIR/chn_domain.list"
+    cat $tmpgfwdomainfile | awk -F '/' '{print $2}' > $tmpgfwfile 2>/dev/null
+    mv -f $tmpgfwfile "$WORKDIR/non_chn_domain.list"
     echo "Updating domain finished"
 }
 EXIT(){
