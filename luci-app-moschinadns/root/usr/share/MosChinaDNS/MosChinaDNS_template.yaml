@@ -1,4 +1,4 @@
-# addr: "127.0.0.1:5353"
+# addr: "127.0.0.1:6052"
 # 分流器设定
 dispatcher:
   # 监听地址 [必需]
@@ -8,7 +8,7 @@ dispatcher:
   #   `port`为监听端口。
   # 默认: ["udp://127.0.0.1:53","tcp://127.0.0.1:53","udp://[::1]:53","tcp://[::1]:53"]
   # 监听所有地址: ["udp://0.0.0.0:53","tcp://0.0.0.0:53"]
-  bind: [ "udp://127.0.0.1:5353","tcp://127.0.0.1:5353","udp://[::1]:5353","tcp://[::1]:5353" ]
+  bind: [ "udp://127.0.0.1:6052","tcp://127.0.0.1:6052","udp://[::1]:6052","tcp://[::1]:6052" ]
 
 # 上游服务器设定
 # 可包含一个或多个上游服务器。
@@ -17,7 +17,7 @@ dispatcher:
 upstream:
   # 一个上游服务器，名叫local
   local: # 服务器名称，可随意设定，只需保证多个服务器名称无重复即可。
-    server: "aliyun" # 使用的服务器的tag。该tag必需在server中定义。
+    server: "mainland" # 使用的服务器的tag。该tag必需在server中定义。
 
     # 策略
     # 策略决定了对于给定请求，是否允许发送至该上游，以及是否采纳返回的应答。
@@ -44,7 +44,7 @@ upstream:
         #   `deny`: 拒绝发送至该上游。
         # e.g. "deny:./blacklist.txt" `blacklist.txt`里的域名不会发送至该上游。
         # e.g. "accept:./whitelist.txt|deny" 只有`whitelist.txt`里的域名才会发送至该上游。
-        domain: "accept:./chn_domain.list|deny"
+        domain: "accept:./chn_domain.list|deny:./non_chn_domain.list"
 
       reply: # 应答策略
 
@@ -52,80 +52,7 @@ upstream:
         # "accept": 直接采纳(不会再执行后续的任何策略)。
         # "deny": 丢弃。
         # "redirect_XXXXXX": 重定向请求。
-        error_rcode: "deny"
-
-        # CNAME策略
-        # 如果返回应答没有CNAME部分，该策略不会生效。
-        # 可由多个策略构成，用`|`分割。处理流程从左至右，如果上一条策略没有命中，将匹配下一条。
-        # 如果直到最后都没有命中任何策略，则继续执行后续的策略。
-        #
-        # 格式: "action:file|action:file|action:file|action..."
-        # `file`为域名表的路径。如果没有指定`file`，则会匹配所有域名。
-        # `action`可以是
-        #   `accept`: 直接采纳应答(不会再执行后续的任何策略)。
-        #   `deny`: 丢弃该应答。
-        #   "redirect_XXXXXX": 重定向请求。
-        cname: "accept:./chn_domain.list|deny"
-
-        # 如何处理不包含任何IP的应答。
-        # "accept": 直接采纳(不会再执行后续的任何策略)。
-        # "deny": 丢弃。
-        # "redirect_XXXXXX": 重定向请求。
-        without_ip: "deny"
-
-        # IP策略
-        # 可由多个策略构成，用`|`分割，处理流程从左至右，如果上一条策略没有命中，将继续匹配下一条。
-        # 如果直到最后都没有命中任何策略，默认`采纳该应答`。
-        #
-        # 格式: "action:file|action:file|action:file|..."
-        # `file`为IP表文件的路径。如果没有指定`file`，则会匹配所有IP。
-        # `action`是策略，可以是:
-        #   `accept`: 采纳该应答。
-        #   `deny`: 丢弃该应答。
-        #   "redirect_XXXXXX": 重定向请求。
-        #
-        # e.g. "deny:./blacklist.txt"
-        # e.g. "accept:./whitelist.txt|deny" 仅允许`whitelist.txt`里的IP。
-        # e.g. "deny:./blacklist.txt|accept:./whitelist.txt|deny"
-        ip: "accept:./chn.list|deny"
-
-  local2: # 服务器名称，可随意设定，只需保证多个服务器名称无重复即可。
-    server: "baidu" # 使用的服务器的tag。该tag必需在server中定义。
-
-    # 策略
-    # 策略决定了对于给定请求，是否允许发送至该上游，以及是否采纳返回的应答。
-    # 策略处理流程从上到下。
-    policies:
-      # 请求策略
-      query:
-
-        # 如何处理无法分流的请求类型。
-        # 目前域名/IP分流策略只能处理A和AAAA请求。
-        # "accept": 非(A和AAAA)请求会被发送至该服务器并且其应答会被直接采纳(不会再执行后续的任何策略)。
-        # "deny": 非(A和AAAA)请求不会由本上游解析。
-        unhandlable_types: "accept"
-
-        # 域名策略
-        # 域名策略将根据请求的域名决定该请求是否允许发送至该上游。
-        # 可由多个策略构成，用`|`分割。处理流程从左至右，如果上一条策略没有命中，将匹配下一条。
-        # 如果直到最后都没有命中任何策略，则请求会发送至该上游，然后执行后续的策略。
-        #
-        # 格式: "action:file|action:file|action:file|action..."
-        # `file`为域名表的路径。如果没有指定`file`，则会匹配所有域名。
-        # `action`可以是
-        #   `accept`: 允许发送至该上游，并且直接采纳其应答(不会再执行后续的任何策略)。
-        #   `deny`: 拒绝发送至该上游。
-        # e.g. "deny:./blacklist.txt" `blacklist.txt`里的域名不会发送至该上游。
-        # e.g. "accept:./whitelist.txt|deny" 只有`whitelist.txt`里的域名才会发送至该上游。
-        domain: "accept:./chn_domain.list"
-
-      reply: # 应答策略
-
-        # 如何处理Rcode不成功(Rcode!=0)的应答
-        # "accept": 直接采纳(不会再执行后续的任何策略)。
-        # "deny": 丢弃。
-        # "redirect_XXXXXX": 重定向请求。
-        error_rcode: "deny"
+        error_rcode: "redirect_oversea"
 
         # CNAME策略
         # 如果返回应答没有CNAME部分，该策略不会生效。
@@ -144,7 +71,7 @@ upstream:
         # "accept": 直接采纳(不会再执行后续的任何策略)。
         # "deny": 丢弃。
         # "redirect_XXXXXX": 重定向请求。
-        without_ip: "deny"
+        without_ip: "redirect_oversea"
 
         # IP策略
         # 可由多个策略构成，用`|`分割，处理流程从左至右，如果上一条策略没有命中，将继续匹配下一条。
@@ -160,43 +87,24 @@ upstream:
         # e.g. "deny:./blacklist.txt"
         # e.g. "accept:./whitelist.txt|deny" 仅允许`whitelist.txt`里的IP。
         # e.g. "deny:./blacklist.txt|accept:./whitelist.txt|deny"
-        ip: "accept:./chn.list"
+        ip: "accept:./chn_ip.list|redirect_oversea"
 
-  # 另外一个上游服务器，名叫cloudflare。设置说明参见上文。
-  cloudflare:
-    server: "cloudflare"
-
-    policies:
-      query:
-        unhandlable_types: "accept"
-        domain: "deny:./chn_domain.list" # chn_domain.list里的域名无需remote解析。
-      reply:
-        error_rcode: "deny"
-        cname: "accept"
-        without_ip: "deny"
-        ip: "accept"
-
-  # google dns
-  google:
-    server: "google"
+  # 另外一个上游服务器，名叫remote。设置说明参见上文。
+  remote:
+    server: "oversea"
 
     policies:
       query:
         unhandlable_types: "accept"
-        domain: "deny:./chn_domain.list" # chn_domain.list里的域名无需remote解析。
-      reply:
-        error_rcode: "deny"
-        cname: "accept"
-        without_ip: "deny"
-        ip: "accept"
+        domain: "accept:./non_chn_domain.list|deny" # chn_domain.list里的域名无需remote解析。
 
 # 服务器设定
 # 可包含一个或多个服务器。
 server:
   # 一个服务器，tag名为`aliyun`。这个tag可以可以随意更改。只需保证多个服务器无重复即可。
-  aliyun:
-    addr: "223.5.5.5:853" # 服务器地址。
-    protocol: "dot" # 服务器协议。`tcp`|`udp`|`doh`|`dot`其中之一。
+  mainland:
+    addr: "127.0.0.1:6050" # 服务器地址。
+    protocol: "udp" # 服务器协议。`tcp`|`udp`|`doh`|`dot`其中之一。
     #socks5: "" # socks5代理服务器地址。注意: 不支持有密码验证的socks5服务器。udp协议不会使用socks5代理。
 
     # 是否请求去重。
@@ -223,24 +131,16 @@ server:
 
     # DoT设定，仅`protocol`为`dot`有用。
     dot:
-      server_name: "dns.alidns.com" # [必需] 服务器的域名/证书名。
+      server_name: "" # [必需] 服务器的域名/证书名。
       idle_timeout: 10 # 空连接超时时间。单位: 秒。0表示禁用连接重用。
 
     # DoH设定，仅`protocol`为`doh`有用。
     doh:
-      url: "https://223.5.5.5/dns-query" # [必需] DoH的URL。
+      url: "" # [必需] DoH的URL。
 
-  baidu:
-    addr: "114.114.114.114:53"
-    protocol: "tcp"
-    deduplicate: false
-    tcp:
-      idle_timeout: 10 # 空连接超时时间。单位: 秒。0表示禁用连接重用。
-
-  # 另一个服务器，tag名为`google`。
-  google:
-    addr: "8.8.8.8:443"
-    protocol: "doh"
+  oversea:
+    addr: "127.0.0.1:6051"
+    protocol: "udp"
     socks5: ""
     deduplicate: false
     edns0:
@@ -251,31 +151,10 @@ server:
     tcp:
         idle_timeout: 10
     dot:
-        server_name: "dns.google"
+        server_name: ""
         idle_timeout: 10
     doh:
-        url: "https://dns.google/dns-query"
-
-  cloudflare:
-    addr: "1.0.0.1:853"
-    protocol: "dot"
-    socks5: ""
-    tcp:
-      idle_timeout: 10
-    dot:
-      server_name: "cloudflare-dns.com"
-      idle_timeout: 10
-    doh:
-      url: "https://cloudflare-dns.com/dns-query"
-
-    deduplicate: false
-    # max_concurrent_queries: 0
-
-    edns0:
-      # client_subnet:
-          # ipv4: ""
-          # ipv6: ""
-      overwrite_ecs: false
+        url: ""
 
   # 如果还想添加服务器，只需将上面的设置模板复制一遍。
   # 保持服务器的tag互相不一样和缩进对齐即可。
