@@ -87,7 +87,7 @@ upstream:
         # e.g. "deny:./blacklist.txt"
         # e.g. "accept:./whitelist.txt|deny" 仅允许`whitelist.txt`里的IP。
         # e.g. "deny:./blacklist.txt|accept:./whitelist.txt|deny"
-        ip: "accept:./chn_ip.list|redirect_oversea"
+        ip: "accept:./chn.list|redirect_oversea"
 
   # 另外一个上游服务器，名叫remote。设置说明参见上文。
   remote:
