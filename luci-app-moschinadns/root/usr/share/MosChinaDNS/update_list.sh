@@ -41,7 +41,7 @@ update_domain_list(){
     fi
     cat $tmpdomainfile | awk -F '/' '{print $2}' > $tmpfile 2>/dev/null
     mv -f $tmpfile "$WORKDIR/chn_domain.list"
-    cat $tmpgfwdomainfile | awk -F '/' '{print $2}' > $tmpgfwfile 2>/dev/null
+    cat $tmpgfwdomainfile > $tmpgfwfile 2>/dev/null
     mv -f $tmpgfwfile "$WORKDIR/non_chn_domain.list"
     echo "Updating domain finished"
 }
