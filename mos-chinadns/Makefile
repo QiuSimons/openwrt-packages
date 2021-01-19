@@ -78,8 +78,9 @@ define Package/$(PKG_NAME)/install
 	$(INSTALL_DIR) $(1)/usr/bin
 	mkdir $(1)/usr/bin/$(PKG_NAME)
 	$(INSTALL_BIN) $(UNZIP_DIR)/mos-chinadns $(1)/usr/bin/$(PKG_NAME)/$(PKG_NAME)
-	$(INSTALL_BIN) $(UNZIP_DIR)/chn.list $(1)/usr/bin/$(PKG_NAME)/chn.list
+	$(INSTALL_BIN) $(UNZIP_DIR)/chn_ip.list $(1)/usr/bin/$(PKG_NAME)/chn_ip.list
 	$(INSTALL_BIN) $(UNZIP_DIR)/chn_domain.list $(1)/usr/bin/$(PKG_NAME)/chn_domain.list
+	$(INSTALL_BIN) $(UNZIP_DIR)/non_chn_domain.list $(1)/usr/bin/$(PKG_NAME)/non_chn_domain.list
 	chmod 755 $(1)/usr/bin/$(PKG_NAME)
 endef
 
