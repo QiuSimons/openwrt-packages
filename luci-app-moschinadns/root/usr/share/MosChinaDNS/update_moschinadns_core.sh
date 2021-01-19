@@ -209,11 +209,14 @@ doupdate_moschinadns_core(){
 	echo -e "start copy" 
 	/etc/init.d/MosChinaDNS stop nobackup
 	rm "$binpath"
-	if [ -e "/tmp/MosChinaDNSupdate/chn.list" ]; then
-		mv -f "/tmp/MosChinaDNSupdate/chn.list" "/usr/share/MosChinaDNS"
+	if [ -e "/tmp/MosChinaDNSupdate/chn_ip.list" ]; then
+		mv -f "/tmp/MosChinaDNSupdate/chn_ip.list" "/usr/share/MosChinaDNS"
 	fi
 	if [ -e "/tmp/MosChinaDNSupdate/chn_domain.list" ]; then
 		mv -f "/tmp/MosChinaDNSupdate/chn_domain.list" "/usr/share/MosChinaDNS"
+	fi
+	if [ -e "/tmp/MosChinaDNSupdate/non_chn_domain.list" ]; then
+		mv -f "/tmp/MosChinaDNSupdate/non_chn_domain.list" "/usr/share/MosChinaDNS"
 	fi
 	mv -f "$downloadbin" "$binpath"
 	if [ "$?" == "1" ]; then
