@@ -52,7 +52,7 @@ upstream:
         # "accept": 直接采纳(不会再执行后续的任何策略)。
         # "deny": 丢弃。
         # "redirect_XXXXXX": 重定向请求。
-        error_rcode: "redirect_oversea"
+        error_rcode: "deny"
 
         # CNAME策略
         # 如果返回应答没有CNAME部分，该策略不会生效。
@@ -71,7 +71,7 @@ upstream:
         # "accept": 直接采纳(不会再执行后续的任何策略)。
         # "deny": 丢弃。
         # "redirect_XXXXXX": 重定向请求。
-        without_ip: "redirect_oversea"
+        without_ip: "deny"
 
         # IP策略
         # 可由多个策略构成，用`|`分割，处理流程从左至右，如果上一条策略没有命中，将继续匹配下一条。
@@ -87,7 +87,7 @@ upstream:
         # e.g. "deny:./blacklist.txt"
         # e.g. "accept:./whitelist.txt|deny" 仅允许`whitelist.txt`里的IP。
         # e.g. "deny:./blacklist.txt|accept:./whitelist.txt|deny"
-        ip: "accept:./chn_ip.list|redirect_oversea"
+        ip: "accept:./chn_ip.list|deny"
 
   # 另外一个上游服务器，名叫remote。设置说明参见上文。
   remote:
@@ -96,7 +96,7 @@ upstream:
     policies:
       query:
         unhandlable_types: "accept"
-        domain: "accept:./non_chn_domain.list|deny" # chn_domain.list里的域名无需remote解析。
+        domain: "deny:./chn_domain.list|accept" # chn_domain.list里的域名无需remote解析。
 
 # 服务器设定
 # 可包含一个或多个服务器。
