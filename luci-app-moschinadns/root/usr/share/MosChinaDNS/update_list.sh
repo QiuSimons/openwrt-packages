@@ -22,7 +22,7 @@ update_ip_list(){
         echo $WORKDIR" is missing"
         EXIT 1
     fi
-    mv -f $tmpfile "$WORKDIR/chn.list"
+    mv -f $tmpfile "$WORKDIR/chn_ip.list"
     echo "Updating ip finished"
 }
 
