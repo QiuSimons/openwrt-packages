@@ -1,6 +1,7 @@
 #!/bin/bash
 PATH="/usr/sbin:/usr/bin:/sbin:/bin"
-IP_URL="https://ftp.apnic.net/apnic/stats/apnic/delegated-apnic-latest"
+IP4_URL="https://raw.githubusercontent.com/QiuSimons/Chnroute/master/dist/chnroute/chnroute.txt"
+IP6_URL="https://raw.githubusercontent.com/QiuSimons/Chnroute/master/dist/chnroute/chnroute-v6.txt"
 DOMAIN_URL="https://raw.githubusercontent.com/felixonmars/dnsmasq-china-list/master/accelerated-domains.china.conf"
 GFWDOMAIN_URL="https://raw.githubusercontent.com/Loyalsoldier/cn-blocked-domain/release/domains.txt"
 WORKDIR=$(uci get MosChinaDNS.MosChinaDNS.workdir 2>/dev/null)
@@ -9,15 +10,21 @@ TEMPDIR="/tmp/MosChinaDNSupdatelist"
 # IP/MASK
 update_ip_list(){
     echo "Updating ip list"
-    local tmpipfile="$TEMPDIR/ip_data"
+    local tmpip4file="$TEMPDIR/ip4_data"
+    local tmpip6file="$TEMPDIR/ip6_data"
     local tmpfile="$TEMPDIR/temp_chn.list"
-    curl $IP_URL -o $tmpipfile 2>/dev/null
-    if [ "$(awk 'NR==1 {print}' $tmpipfile 2>/dev/null)" = "" ]; then
+    curl $IP4_URL -o $tmpip4file 2>/dev/null
+    if [ "$(awk 'NR==1 {print}' $tmpip4file 2>/dev/null)" = "" ]; then
         echo "received ipv4 empty body"
         EXIT 2
     fi
-    cat $tmpipfile | awk -F '|' '$2 ~ /CN/ && $3 ~ /ipv6/ {print $4"/"$5}' >> $tmpfile 2>/dev/null
-    cat $tmpipfile | awk -F '|' '$2 ~ /CN/ && $3 ~ /ipv4/ {print $4"/"32-log($5)/log(2)}' > $tmpfile 2>/dev/null
+    curl $IP6_URL -o $tmpip6file 2>/dev/null
+    if [ "$(awk 'NR==1 {print}' $tmpip6file 2>/dev/null)" = "" ]; then
+        echo "received ipv6 empty body"
+        EXIT 2
+    fi
+    cat $tmpip6file >> $tmpfile 2>/dev/null
+    cat $tmpip4file > $tmpfile 2>/dev/null
     if [ ! -d "$WORKDIR" ]; then
         echo $WORKDIR" is missing"
         EXIT 1
