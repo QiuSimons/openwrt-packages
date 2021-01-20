@@ -23,8 +23,8 @@ update_ip_list(){
         echo "received ipv6 empty body"
         EXIT 2
     fi
-    cat $tmpip6file >> $tmpfile 2>/dev/null
     cat $tmpip4file > $tmpfile 2>/dev/null
+    cat $tmpip6file >> $tmpfile 2>/dev/null
     if [ ! -d "$WORKDIR" ]; then
         echo $WORKDIR" is missing"
         EXIT 1
