@@ -9,8 +9,8 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=MosChinaDNS
-PKG_VERSION:=v1.5.6
-PKG_RELEASE:=9
+PKG_VERSION:=v1.5.7
+PKG_RELEASE:=1
 
 include $(INCLUDE_DIR)/package.mk
 
@@ -57,7 +57,7 @@ endif
 PKG_SOURCE:=mos-chinadns-linux-$(PKG_ARCH_MOSCHINADNS).zip
 
 # https://github.com/IrineSistiana/mos-chinadns/releases/download/v1.0.0-rc1/mos-chinadns-linux-mipsle-softfloat.zip
-PKG_SOURCE_URL:=https://github.com/IrineSistiana/mos-chinadns/releases/download/$(PKG_VERSION)/
+PKG_SOURCE_URL:=https://github.com/QiuSimons/mos-chinadns/releases/download/$(PKG_VERSION)/
 
 UNZIP_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)/$(PKG_NAME)-unzip
 
