@@ -74,6 +74,11 @@ endef
 define Build/Compile
 endef
 
+define Package/$(PKG_NAME)/extra_provides
+    echo 'libc.so.6'; \
+    echo 'libpthread.so.0';
+endef
+
 define Package/$(PKG_NAME)/install
 	$(INSTALL_DIR) $(1)/usr/bin
 	mkdir $(1)/usr/bin/$(PKG_NAME)
