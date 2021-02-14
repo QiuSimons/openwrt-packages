@@ -439,8 +439,8 @@ start_service() {
 	config_get binpath $CONFIGURATION binpath "/usr/bin/MosChinaDNS/MosChinaDNS"
 
 	mkdir -p ${binpath%/*}
-	ADDITIONAL_ARGS="$ADDITIONAL_ARGS -c $configpath"
-	ADDITIONAL_ARGS="$ADDITIONAL_ARGS -dir $workdir"
+	ADDITIONAL_ARGS="$ADDITIONAL_ARGS -c $configpath -quiet"
+	ADDITIONAL_ARGS="$ADDITIONAL_ARGS -dir $workdir -quiet"
 	# config_get httpport $CONFIGURATION httpport 3000
 	# ADDITIONAL_ARGS="$ADDITIONAL_ARGS -p $httpport"
 
