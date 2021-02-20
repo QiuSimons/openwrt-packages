@@ -66,6 +66,8 @@ PKG_HASH:=skip
 define Build/Prepare
 	mkdir -vp $(UNZIP_DIR)
 	unzip -od $(UNZIP_DIR) $(DL_DIR)/$(PKG_SOURCE)
+	chmod 755 $(UNZIP_DIR)/mos-chinadns
+	$(STAGING_DIR_HOST)/bin/upx --lzma --best $(UNZIP_DIR)/mos-chinadns
 endef
 
 define Build/Configure
@@ -82,8 +84,6 @@ endef
 define Package/$(PKG_NAME)/install
 	$(INSTALL_DIR) $(1)/usr/bin
 	mkdir $(1)/usr/bin/$(PKG_NAME)
-	chmod 755 $(UNZIP_DIR)/mos-chinadns
-#	$(STAGING_DIR_HOST)/bin/upx --lzma --best $(UNZIP_DIR)/mos-chinadns
 	$(INSTALL_BIN) $(UNZIP_DIR)/mos-chinadns $(1)/usr/bin/$(PKG_NAME)/$(PKG_NAME)
 	$(INSTALL_BIN) $(UNZIP_DIR)/chn_ip.list $(1)/usr/bin/$(PKG_NAME)/chn_ip.list
 	$(INSTALL_BIN) $(UNZIP_DIR)/chn_domain.list $(1)/usr/bin/$(PKG_NAME)/chn_domain.list
