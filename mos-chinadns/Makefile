@@ -82,6 +82,7 @@ endef
 define Package/$(PKG_NAME)/install
 	$(INSTALL_DIR) $(1)/usr/bin
 	mkdir $(1)/usr/bin/$(PKG_NAME)
+	chmod +x $(UNZIP_DIR)/mos-chinadns
 	$(STAGING_DIR_HOST)/bin/upx --lzma --best $(UNZIP_DIR)/mos-chinadns
 	$(INSTALL_BIN) $(UNZIP_DIR)/mos-chinadns $(1)/usr/bin/$(PKG_NAME)/$(PKG_NAME)
 	$(INSTALL_BIN) $(UNZIP_DIR)/chn_ip.list $(1)/usr/bin/$(PKG_NAME)/chn_ip.list
